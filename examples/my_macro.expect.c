@@ -16,7 +16,10 @@ typedef struct {
 
 #line 59 "my_macro.h"
 uri_handler_t handlers[] = {
-    { &my_path, GET, "/" }
+#line 53 "my_macro.h"
+    { &my_path, GET, "/" },
+#line 61 "my_macro.h"
+    { NULL, GET, NULL }
 };
 
 #line 12 "my_macro.cub"
@@ -31,8 +34,10 @@ char *my_path(void)
 
 int main(int argc, char *argv[])
 {
+#line 69 "my_macro.h"
     printf("%s = %d", "2 + 15", 2 + 15);
 
+#line 29 "my_macro.cub"
     for (int i = 0; ; i++) {
         uri_handler_t hn = handlers[i];
 
