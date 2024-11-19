@@ -48,7 +48,7 @@ typedef struct {
  * statement verbatim. Omitting it will cause the attribute
  * to "eat" the statement.
  */
-macro_attr! path {
+macro_rules! path {
     fn ($method:expr, $path:expr) => {
         ${_handlers_stack += { &$1, $method, $path }, }
 
