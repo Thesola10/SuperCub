@@ -1,0 +1,38 @@
+
+// This directive tells SuperCub to merge the header itself, meaning:
+// - ifdef/ifndef blocks related to the __SUPER_CUB__ macro will be parsed by SuperCub
+// - any SuperCub macros within will be applied to the current context
+// - cpp will not see the include directive
+#[with_macros]
+#include "my_macro.h"
+
+// These includes are missing the with_macros directive, meaning:
+// - SuperCub will not read their contents
+// - these include directives will be passed as-is to cpp
+#include <stdio.h>
+#include <string.h>
+
+// Annotated statements systematically have their signature copied to above
+// the macro declaration for that annotation, to allow reuse.
+// Make sure to include any headers providing type signatures BEFORE the
+// header containing the annotating macro.
+#[path(GET, "/")]
+char *my_path(void)
+{
+    return "Hello!\n";
+}
+
+int main(int argc, char *argv[])
+{
+    print_test!(2 + 15);
+
+    for (int i = 0; ; i++) {
+        uri_handler_t hn = handlers[i];
+
+        if (hn.handler == NULL)
+            break;
+        else if (hn.method == GET && !strcmp(hn.path, "/"))
+            printf("%s\n", hn.handler());
+    }
+    return 0;
+}

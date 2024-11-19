@@ -1,0 +1,12 @@
+[package]
+name = "supercub"
+version = "0.0.1"
+authors = ["Karim Vergnes <me@thesola.io>"]
+description = "C preprocessor"
+keywords = [ "c", "c-language", "preprocessor" ]
+edition = "2021"
+
+[dependencies]
+lang_c = "0.15.1"
+clap = { version = "4.0.14", features = ["derive"] }
+peg = "0.8.0"
