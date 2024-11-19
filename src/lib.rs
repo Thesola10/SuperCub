@@ -1,3 +1,4 @@
-fn main() {
+pub fn lol() {
     println!("hello");
 }
+

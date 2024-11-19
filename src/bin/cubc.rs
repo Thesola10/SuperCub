@@ -1,3 +1,5 @@
+use supercub::lol;
+
 fn main() {
-    println!("hello");
+    lol();
 }
