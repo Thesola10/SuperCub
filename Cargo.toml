@@ -12,3 +12,6 @@ peg = "0.8.0"
 
 [[bin]]
 name = "cubc"
+
+[[bin]]
+name = "cub-pp"
