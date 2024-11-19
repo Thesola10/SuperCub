@@ -7,6 +7,8 @@ keywords = [ "c", "c-language", "preprocessor" ]
 edition = "2021"
 
 [dependencies]
-lang_c = "0.15.1"
-clap = { version = "4.0.14", features = ["derive"] }
+lang-c = "0.15.1"
 peg = "0.8.0"
+
+[[bin]]
+name = "cubc"
