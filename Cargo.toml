@@ -7,7 +7,8 @@ keywords = [ "c", "c-language", "preprocessor" ]
 edition = "2021"
 
 [dependencies]
-lang-c = "0.15.1"
+tree-sitter = "0.24.4"
+tree-sitter-c = "0.23.2"
 peg = "0.8.0"
 
 [[bin]]
