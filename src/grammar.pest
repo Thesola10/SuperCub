@@ -1,7 +1,11 @@
 alpha = _{'a'..'z'|'A'..'Z'}
 digit = _{'0'..'9'}
 
-WHITESPACE   = _{" " | "\t" | "\n"}
+WHITESPACE   = _{" " | "\t" | NEWLINE}
+
+_sl_comment = @{ "//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
+_ml_comment = @{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+COMMENT = _{ _sl_comment | _ml_comment }
 
 kw_macro_rules = _{"macro_rules!"}
 
@@ -26,7 +30,8 @@ macro_call = { ident ~ "!" ~ arg_set }
 infix = { macro_call | var_op | var_string | var_base }
 
 arg_inner = _{ !("("|","|")") ~ ANY }
-arg_set = { "(" ~ (arg_inner+ ~ ("," ~ arg_inner+)* )? ~ ")" }
+argument = { arg_inner+ }
+arg_set = { "(" ~ (argument ~ ("," ~ argument)* )? ~ ")" }
 
 match = { param_set ~ "=>" ~ "{" ~ c_chunk* ~ "}" }
 fn_match = { "fn" ~ match }
@@ -52,5 +57,5 @@ c_inner_chunk = { infix | c_block | c_stmt_inner* }
 
 decor = { "#[" ~ ident ~ arg_set? ~ "]" ~ c_chunk }
 
-chunk = _{ macro_rules | decor | c_chunk }
+chunk = _{ COMMENT | NEWLINE | macro_rules | decor | c_chunk }
 document = { (chunk)* }
