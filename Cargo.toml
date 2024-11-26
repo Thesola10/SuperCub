@@ -9,7 +9,7 @@ edition = "2021"
 [dependencies]
 tree-sitter = "0.24.4"
 tree-sitter-c = "0.23.2"
-peg = "0.8.0"
+pest = "2.7.14"
 
 [[bin]]
 name = "cubc"
