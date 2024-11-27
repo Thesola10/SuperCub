@@ -12,9 +12,9 @@ ident = @{ (alpha | "_") ~ (alpha|digit|"_")* }
 type_ident = { "ident" }
 type_expr = { "expr" }
 type_tt = { "tt" }
-type = _{ type_ident | type_expr | type_tt }
+_type = _{ type_ident | type_expr | type_tt }
 
-param = { "$" ~ ident ~ (":" ~ type)? }
+param = { "$" ~ ident ~ (":" ~ _type)? }
 param_set = { "(" ~ (param ~ ("," ~ param)* )? ~ ")" }
 
 var_base = @{ "$" ~ ident }
@@ -34,12 +34,12 @@ arg_inner = _{ !("("|","|")") ~ ANY }
 argument = { arg_inner+ }
 arg_set = { "(" ~ (argument ~ ("," ~ argument)* )? ~ ")" }
 
-match = { param_set ~ "=>" ~ "{" ~ c_chunk* ~ "}" }
-fn_match = { "fn" ~ match }
-var_match = { "var" ~ match }
-type_match = { "type" ~ match }
+_match = { param_set ~ "=>" ~ "{" ~ c_chunk* ~ "}" }
+fn_match = { "fn" ~ _match }
+var_match = { "var" ~ _match }
+type_match = { "type" ~ _match }
 
-any_match = _{ fn_match | var_match | type_match | match }
+any_match = _{ fn_match | var_match | type_match | _match }
 
 
 kw_macro_rules = _{"macro_rules!"}
