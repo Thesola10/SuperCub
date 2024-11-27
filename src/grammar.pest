@@ -1,6 +1,7 @@
 alpha = _{'a'..'z'|'A'..'Z'}
 digit = _{'0'..'9'}
 
+// In C, newlines are a kind of whitespace
 WHITESPACE   = _{" " | "\t" | NEWLINE}
 
 _sl_comment = @{ "//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
@@ -22,14 +23,17 @@ var_num = @{ "$" ~ ('0'..'9')}
 var_star = @{ "$*" }
 var_any = { var_star | var_num | var_base }
 var_string = @{ "#" ~ var_any }
+
+// Supported variable operators. Currently only assign/append
 assign_eq = { "=" }
 assign_append = { "+=" }
 assign = _{ assign_eq | assign_append }
+
 var_op = { "${" ~ ident ~ assign ~ c_inner_chunk ~ c_stmt_inner ~ "}" }
 
 macro_call = { ident ~ "!" ~ arg_set }
-infix = { macro_call | var_op | var_string | var_any }
 
+// Arguments refer to macro calls, while params refer to macro definitions
 arg_inner = _{ !("("|","|")") ~ ANY }
 argument = { arg_inner+ }
 arg_set = { "(" ~ (argument ~ ("," ~ argument)* )? ~ ")" }
@@ -45,10 +49,12 @@ any_match = _{ fn_match | var_match | type_match | _match }
 kw_macro_rules = _{"macro_rules!"}
 macro_rules = { kw_macro_rules ~ ident ~ "{" ~ any_match* ~ "}" }
 
+// Intended for functions and the like which don't end in semicolon
 c_block_inner = _{ !("{"|"}") ~ ANY }
 c_bare_block = _{ "{" ~ (infix|c_block_inner)* ~ c_bare_block* ~ (infix|c_block_inner)* ~ "}" }
 c_block = { (infix|c_block_inner)* ~ c_bare_block }
 
+// Uses c_bare_block as a bracket counter
 c_stmt_inner = _{ !("{"|";"|"}") ~ ANY }
 c_stmt = { (infix|c_bare_block|c_stmt_inner)* ~ ";" }
 
@@ -58,12 +64,15 @@ c_incl_str = @{ "\"" ~ c_incl_inner* ~ "\"" }
 c_incl_path = { c_incl_sys | c_incl_str }
 c_include = { "#" ~ "include" ~ c_incl_path }
 
-
+// Generic macros are of interest to us -- e.g. ifdef __SUPER_CUB__
 c_macro = @{ "#" ~ (!NEWLINE ~ ANY)* ~ !"\\" ~ NEWLINE }
+
 c_chunk = { c_include | c_macro | infix | c_stmt | c_block }
 c_inner_chunk = { infix | c_block | c_stmt_inner* }
 
+// Chunking allows us to isolate the captured statement for decors
 decor = { "#[" ~ ident ~ arg_set? ~ "]" ~ c_chunk }
 
+infix = { macro_call | var_op | var_string | var_any }
 chunk = _{ COMMENT | NEWLINE | macro_rules | decor | c_chunk }
 document = { (chunk)* }
