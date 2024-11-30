@@ -81,4 +81,4 @@ decor = { "#[" ~ ident ~ arg_set? ~ "]" ~ c_chunk }
 
 infix = { macro_call | var_op | var_string | var_any }
 chunk = _{ COMMENT | NEWLINE | macro_rules | decor | c_chunk }
-document = { (chunk)* }
+document = { SOI ~ (chunk)* ~ EOI }
