@@ -8,6 +8,9 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     let fname = &args[1];
 
+    //TODO: hopefully we won't need this in the future
+    env_logger::init();
+
     let src: String = fs::read_to_string(fname)?;
     test_parse(&src);
     Ok(())

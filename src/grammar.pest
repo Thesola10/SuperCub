@@ -13,21 +13,22 @@ ident = @{ (alpha | "_") ~ (alpha|digit|"_")* }
 type_ident = { "ident" }
 type_expr = { "expr" }
 type_tt = { "tt" }
-_type = _{ type_ident | type_expr | type_tt }
+_type = { type_ident | type_expr | type_tt }
 
 param = { "$" ~ ident ~ (":" ~ _type)? }
-param_set = { "(" ~ (param ~ ("," ~ param)* )? ~ ")" }
+param_set = _{ "(" ~ (param ~ ("," ~ param)* )? ~ ")" }
 
-var_base = @{ "$" ~ ident }
-var_num = @{ "$" ~ ('0'..'9')}
+var_base = ${ "$" ~ ident }
+var_num_digit = @{ '0'..'9' }
+var_num = ${ "$" ~ var_num_digit }
 var_star = @{ "$*" }
 var_any = { var_star | var_num | var_base }
-var_string = @{ "#" ~ var_any }
+var_string = ${ "#" ~ var_any }
 
 // Supported variable operators. Currently only assign/append
 assign_eq = { "=" }
 assign_append = { "+=" }
-assign = _{ assign_eq | assign_append }
+assign = { assign_eq | assign_append }
 
 var_op = { "${" ~ ident ~ assign ~ c_inner_chunk ~ c_stmt_inner ~ "}" }
 
@@ -36,14 +37,14 @@ macro_call = { ident ~ "!" ~ arg_set }
 // Arguments refer to macro calls, while params refer to macro definitions
 arg_inner = _{ !("("|","|")") ~ ANY }
 argument = { arg_inner+ }
-arg_set = { "(" ~ (argument ~ ("," ~ argument)* )? ~ ")" }
+arg_set = _{ "(" ~ (argument ~ ("," ~ argument)* )? ~ ")" }
 
 _match = { param_set ~ "=>" ~ "{" ~ c_chunk* ~ "}" }
 fn_match = { "fn" ~ _match }
 var_match = { "var" ~ _match }
 type_match = { "type" ~ _match }
 
-any_match = _{ fn_match | var_match | type_match | _match }
+any_match = { fn_match | var_match | type_match | _match }
 
 
 kw_macro_rules = _{"macro_rules!"}
@@ -80,5 +81,5 @@ c_inner_chunk = { infix | c_block | c_stmt_inner* }
 decor = { "#[" ~ ident ~ arg_set? ~ "]" ~ c_chunk }
 
 infix = { macro_call | var_op | var_string | var_any }
-chunk = _{ COMMENT | NEWLINE | macro_rules | decor | c_chunk }
+chunk = { COMMENT | NEWLINE | macro_rules | decor | c_chunk }
 document = { SOI ~ (chunk)* ~ EOI }

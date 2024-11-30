@@ -12,7 +12,11 @@ tree-sitter-c = "0.23.2"
 pest = "2.7.14"
 pest_derive = "2.7.14"
 from-pest = "0.3.2"
-pest-ast = "0.3.4"
+#pest-ast = "0.3.4"
+
+#TODO: Disable tracing once AST is confirmed stable
+pest-ast = { git = "https://github.com/TheVeryDarkness/ast.git", features = [ "trace" ] }
+env_logger = "0.11.5"
 
 [[bin]]
 name = "cubc"

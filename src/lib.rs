@@ -6,13 +6,20 @@ extern crate pest;
 extern crate pest_ast;
 extern crate from_pest;
 
-mod parser;
+pub mod parser;
+pub mod realize;
+
+use crate::parser::ast::Document;
 
 pub fn test_parse(doc: &str) {
     use pest::Parser;
+    use from_pest::FromPest;
     use parser::cub;
+    use parser::ast::Document;
 
-    let pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
+    let mut pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
+
+    let _parse_tree: Document = Document::from_pest(&mut pairs).unwrap();
 
     for pair in pairs {
         println!("Rule:    {:?}", pair.as_rule());
@@ -27,3 +34,14 @@ pub fn test_parse(doc: &str) {
     }
 }
 
+
+pub fn load_document(doc: &str) -> Document {
+    use pest::Parser;
+    use from_pest::FromPest;
+
+    use crate::parser::cub;
+
+    let mut pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
+
+    Document::from_pest(&mut pairs).unwrap()
+}
