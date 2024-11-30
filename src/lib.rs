@@ -11,6 +11,8 @@ pub mod realize;
 
 use crate::parser::ast::Document;
 
+use crate::realize::Env;
+
 pub fn test_parse(doc: &str) {
     use pest::Parser;
     use from_pest::FromPest;
@@ -34,7 +36,6 @@ pub fn test_parse(doc: &str) {
     }
 }
 
-
 pub fn load_document(doc: &str) -> Document {
     use pest::Parser;
     use from_pest::FromPest;
@@ -44,4 +45,12 @@ pub fn load_document(doc: &str) -> Document {
     let mut pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
 
     Document::from_pest(&mut pairs).unwrap()
+}
+
+pub fn realize(doc: &str, env: Vec<Env>) -> String {
+    use crate::realize::Realizable;
+
+    let document = load_document(doc);
+
+    document.realize(env).to_owned()
 }

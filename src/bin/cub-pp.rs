@@ -1,4 +1,4 @@
-use supercub::test_parse;
+use supercub::realize;
 use std::fs;
 use std::env;
 use std::error::Error;
@@ -12,6 +12,6 @@ fn main() -> Result<(), Box<dyn Error>>{
     env_logger::init();
 
     let src: String = fs::read_to_string(fname)?;
-    test_parse(&src);
+    println!("{}", realize(&src, Vec::new()));
     Ok(())
 }
