@@ -1,12 +1,18 @@
-use pest_derive::Parser;
-use pest::Parser;
+#[macro_use]
+extern crate pest_derive;
+extern crate pest;
 
-#[derive(Parser)]
-#[grammar = "grammar.pest"]
-pub struct CubParser;
+#[macro_use]
+extern crate pest_ast;
+extern crate from_pest;
+
+mod parser;
 
 pub fn test_parse(doc: &str) {
-    let pairs = CubParser::parse(Rule::document, doc).unwrap();
+    use pest::Parser;
+    use parser::cub;
+
+    let pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
 
     for pair in pairs {
         println!("Rule:    {:?}", pair.as_rule());
