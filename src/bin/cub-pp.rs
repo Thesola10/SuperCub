@@ -1,7 +1,11 @@
-use supercub::realize;
+/// Reference preprocessor for Super Cub.
+/// Takes a single file as input (or stdin), outputs resulting C code to stdout.
+
 use std::fs;
 use std::env;
 use std::error::Error;
+
+use supercub::realize;
 
 fn main() -> Result<(), Box<dyn Error>>{
     let args: Vec<String> = env::args().collect();
