@@ -2,9 +2,8 @@
 
 use crate::{parser::ast, realize::{Env, Realizable}};
 
-use super::{Builtin, Macro, Decorator, builtin, builtin_macro, builtin_decor};
+use super::{BUILTINS, Builtin, Consumer, builtin_macro, builtin_decor};
 
-#[apply(builtin!)]
 #[apply(builtin_macro!)]
 pub fn shell(args: Vec<&str>, env: Vec<Env>)
 {

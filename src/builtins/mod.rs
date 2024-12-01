@@ -11,73 +11,60 @@ pub mod body;
 pub mod shell;
 pub mod hash;
 
+/// Gathered builtins defined below
+#[distributed_slice]
+pub static BUILTINS: [&'static Builtin];
 
-/// Built-in macro that can be used as a function-like call
-pub trait Macro: Builtin {
-    fn realize(&self, args: Vec<&str>, env: Vec<Env>) -> Vec<&dyn Realizable>;
+type MacroConsumer = fn(args: Vec<&str>, env: Vec<Env>) -> Vec<Box<dyn Realizable>>;
+type DecoratorConsumer = fn(target: ast::CChunk) -> Vec<Box<dyn Realizable>>;
+
+pub enum Consumer {
+    Macro(MacroConsumer),
+    Decorator(DecoratorConsumer)
 }
 
-/// Built-in macro that can be used as a decorator
-pub trait Decorator: Builtin {
-    fn resolve(&self, target: ast::CChunk) -> Vec<&dyn Realizable>;
+pub struct Builtin {
+    pub name: &'static str,
+    pub consumer: Consumer
 }
 
-/// Common trait for builtins
-pub trait Builtin {
-    fn get_name(&self) -> &str;
-}
-
-#[macro_export]
-macro_rules! builtin {(
-    $(#[$fn_meta:meta])*
-    $fn_vis:vis
-    fn $NAME:ident ($($param:ident : $type:ty),*) $body:block
-) => (
-    $fn_vis struct $NAME {}
-
-    impl Builtin for $NAME {
-        fn get_name(&self) -> &str { stringify!($NAME) }
-    }
-
-    $(#[$fn_meta])*
-    $fn_vis
-    fn $NAME ($($param : $type),*) $body
-)}
-
+/// Specialization macro for converting a function into an implementation of Macro
 #[macro_export]
 macro_rules! builtin_macro {(
     $(#[$fn_meta:meta])*
     $fn_vis:vis
     fn $NAME:ident ($($param:ident : $type:ty),*) $body:block
 ) => (
-    impl Macro for $NAME {
-        $(#[$fn_meta])*
-        fn realize(&self, $($param : $type),*) -> Vec<&dyn Realizable> $body
+
+    with_eager_expansions! {
+        #[distributed_slice(BUILTINS)]
+        static #{concat_idents!(BUILTIN_MACRO_, $NAME)}: &'static Builtin =
+            &Builtin {
+                name: stringify!($NAME),
+                consumer: Consumer::Macro(|$($param : $type),*| -> Vec<Box<dyn Realizable>>
+                    $body )
+            };
     }
 )}
 
+/// Specialization macro for converting a function into an implementation of Decorator
 #[macro_export]
 macro_rules! builtin_decor {(
     $(#[$fn_meta:meta])*
     $fn_vis:vis
     fn $NAME:ident ($($param:ident : $type:ty),*) $body:block
 ) => (
-    impl Decorator for $NAME {
-        $(#[$fn_meta])*
-        fn resolve(&self, $($param : $type),*) -> Vec<&dyn Realizable> $body
+    with_eager_expansions! {
+        #[distributed_slice(BUILTINS)]
+        static #{concat_idents!(BUILTIN_DECOR_, $NAME)}: &'static Builtin =
+            &Builtin {
+                name: stringify!($NAME),
+                consumer: Consumer::Decorator(|$($param : $type),*| -> Vec<Box<dyn Realizable>>
+                    $body )
+            };
     }
 )}
 
-pub(crate) use builtin;
 pub(crate) use builtin_macro;
 pub(crate) use builtin_decor;
 
-
-pub fn get_all_builtins() -> Vec<Box<dyn Builtin>> {
-    vec!(
-        Box::new(tokenize::tokenize {}),
-        Box::new(body::body {}),
-        Box::new(shell::shell {}),
-        Box::new(hash::hash {}),
-    )
-}

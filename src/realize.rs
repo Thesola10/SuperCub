@@ -1,7 +1,6 @@
 //! The realzation mechanism to turn a Super Cub AST into valid C code.
 
 use crate::parser::ast;
-use crate::builtins::Builtin;
 
 /// AST elements which can be converted into plain text.
 pub trait Realizable: Resolvable {
@@ -37,8 +36,7 @@ pub trait Resolvable {
 /// the Realization process.
 pub enum Env {
     Variable { name: Box<str>, value: Box<str> },
-    MacroRules (ast::MacroRules),
-    Builtin (Box<dyn Builtin>)
+    MacroRules (ast::MacroRules)
 }
 
 impl Realizable for ast::Document

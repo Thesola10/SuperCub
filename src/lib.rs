@@ -1,5 +1,8 @@
 //! The Super Cub preprocessor library.
 
+#![feature(used_with_arg)]
+#![feature(min_specialization)]
+
 #[macro_use]
 extern crate pest_derive;
 extern crate pest;
@@ -10,6 +13,12 @@ extern crate from_pest;
 
 #[macro_use]
 extern crate macro_rules_attribute;
+
+#[macro_use]
+extern crate linkme;
+
+#[macro_use]
+extern crate with_builtin_macros;
 
 pub mod parser;
 pub mod realize;

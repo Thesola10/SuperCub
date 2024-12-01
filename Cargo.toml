@@ -10,6 +10,8 @@ edition = "2021"
 tree-sitter = "0.24.4"
 tree-sitter-c = "0.23.2"
 macro_rules_attribute = "0.2.0"
+linkme = { version = "0.3.31", features = [ "used_linker" ] }
+with_builtin_macros = "0.1.0"
 pest = "2.7.14"
 pest_derive = "2.7.14"
 from-pest = "0.3.2"
