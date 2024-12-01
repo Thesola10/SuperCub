@@ -1,4 +1,4 @@
-//! The AST parser and spec for the SuperCub preprocessor
+//! The AST parser and spec for the Super Cub preprocessor.
 
 pub mod cub {
     #[derive(Parser)]

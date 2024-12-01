@@ -1,5 +1,5 @@
-/// Reference preprocessor for Super Cub.
-/// Takes a single file as input (or stdin), outputs resulting C code to stdout.
+//! Reference preprocessor for Super Cub.
+//! Takes a single file as input (or stdin), outputs resulting C code to stdout.
 
 use std::fs;
 use std::env;
