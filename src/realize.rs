@@ -51,11 +51,11 @@ impl Resolvable for ast::Document
 {
     fn resolve(&self) -> Vec<&dyn Realizable>
     {
-        Vec::new()
+        vec!()
     }
 
     fn get_env(&self) -> Vec<Env>
     {
-        Vec::new()
+        vec!()
     }
 }
