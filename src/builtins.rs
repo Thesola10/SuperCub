@@ -15,7 +15,7 @@ pub mod hash;
 #[distributed_slice]
 pub static BUILTINS: [&'static Builtin];
 
-type MacroConsumer = fn(args: Vec<&str>, env: Vec<Env>) -> Vec<Box<dyn Realizable>>;
+type MacroConsumer = fn(args: Vec<Box<str>>, env: Vec<Env>) -> Vec<Box<dyn Realizable>>;
 type DecoratorConsumer = fn(target: ast::CChunk) -> Vec<Box<dyn Realizable>>;
 
 pub enum Consumer {

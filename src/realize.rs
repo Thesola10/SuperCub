@@ -2,6 +2,9 @@
 
 use crate::parser::ast;
 
+pub mod macro_call;
+pub mod variable;
+
 /// AST elements which can be converted into plain text.
 pub trait Realizable: Resolvable {
     /// Return plain text representing this Realizable.
@@ -34,10 +37,12 @@ pub trait Resolvable {
 
 /// An object representing an environment key susceptible to alter
 /// the Realization process.
+#[derive(Clone)]
 pub enum Env {
     Variable { name: Box<str>, value: Box<str> },
     MacroRules (ast::MacroRules)
 }
+
 
 impl Realizable for ast::Document
 {

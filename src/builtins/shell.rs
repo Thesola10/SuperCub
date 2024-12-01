@@ -5,7 +5,7 @@ use crate::{parser::ast, realize::{Env, Realizable}};
 use super::{BUILTINS, Builtin, Consumer, builtin_macro, builtin_decor};
 
 #[apply(builtin_macro!)]
-pub fn shell(args: Vec<&str>, env: Vec<Env>)
+pub fn shell(args: Vec<Box<str>>, env: Vec<Env>)
 {
     vec!()
 }
