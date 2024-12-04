@@ -1,6 +1,8 @@
 
-use super::{Realizable, Resolvable, Env};
+use super::{Realizable, Resolvable, Infixable, Env};
 use crate::parser::ast;
+
+use pest::Span;
 
 fn apply_builtin(name: Box<str>, args: Vec<Box<str>>, env: Vec<Env>)
         -> Vec<Box<dyn Realizable>>
@@ -55,7 +57,7 @@ fn apply_rules(rules: ast::MacroRules, args: Vec<Box<str>>, mut env: Vec<Env>)
 }
 
 
-impl Realizable for ast::MacroCall
+impl Realizable for ast::MacroCall<'_>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -85,7 +87,15 @@ impl Realizable for ast::MacroCall
     }
 }
 
-impl Resolvable for ast::MacroCall
+impl Infixable for ast::MacroCall<'_>
+{
+    fn get_span(&self) -> Span
+    {
+        self.span
+    }
+}
+
+impl Resolvable for ast::MacroCall<'_>
 {
     fn resolve(&self) -> Vec<&dyn Realizable>
     {

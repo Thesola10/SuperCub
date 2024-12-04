@@ -1,6 +1,8 @@
 
-use super::{Realizable, Resolvable, Env};
+use super::{Realizable, Resolvable, Infixable, Env};
 use crate::parser::ast;
+
+use pest::Span;
 
 fn find_by_name(id: String, env: Vec<Env>) -> Option<&'static str>
 {
@@ -43,7 +45,7 @@ fn merge_numbered(env: Vec<Env>) -> Option<&'static str>
     result
 }
 
-impl Realizable for ast::Variable
+impl Realizable for ast::Variable<'_>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -61,21 +63,23 @@ impl Realizable for ast::Variable
     }
 }
 
-impl Resolvable for ast::Variable
+impl Infixable for ast::Variable<'_>
 {
-    fn resolve(&self) -> Vec<&dyn Realizable>
+    fn get_span(&self) -> Span
     {
-        vec!(self)
-    }
-
-    fn get_env(&self) -> Vec<Env>
-    {
-        vec!()
+        match self {
+            ast::Variable::NamedVariable(nv) => nv.span,
+            ast::Variable::NumberVariable(nv) => nv.span,
+            ast::Variable::StarVariable(nv) => nv.span
+        }
     }
 }
 
+// An empty impl means end of resolution tree
+impl Resolvable for ast::Variable<'_> {}
 
-impl Realizable for ast::StringVariable
+
+impl Realizable for ast::StringVariable<'_>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -84,15 +88,12 @@ impl Realizable for ast::StringVariable
     }
 }
 
-impl Resolvable for ast::StringVariable
+impl Infixable for ast::StringVariable<'_>
 {
-    fn resolve(&self) -> Vec<&dyn Realizable>
+    fn get_span(&self) -> Span
     {
-        vec!(self)
-    }
-
-    fn get_env(&self) -> Vec<Env>
-    {
-        vec!()
+        self.span
     }
 }
+
+impl Resolvable for ast::StringVariable<'_> {}
