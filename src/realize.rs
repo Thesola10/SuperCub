@@ -50,7 +50,17 @@ pub trait Resolvable {
 #[derive(Clone)]
 pub enum Env<'pest> {
     Variable { name: Box<str>, value: Box<str> },
-    MacroRules (ast::MacroRules<'pest>)
+    MacroRules (ast::MacroRules<'pest>),
+    FileName (Box<str>)
+}
+
+/// An object representing a line-encoded Realization string.
+/// This is used to generate #line directives in the final C code.
+#[derive(Clone)]
+pub struct Realization<'re> {
+    pub filename: &'re str,
+    pub line: u32,
+    pub block: &'re str
 }
 
 
