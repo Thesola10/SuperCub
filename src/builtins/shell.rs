@@ -11,7 +11,7 @@ pub fn shell(args: Vec<Box<str>>, env: Vec<Env>)
 }
 
 #[apply(builtin_decor!)]
-pub fn shell(target: ast::CChunk)
+pub fn shell(args: Vec<Box<str>>, target: ast::CChunk)
 {
     vec!()
 }

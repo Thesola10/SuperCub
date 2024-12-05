@@ -50,6 +50,7 @@ pub trait Resolvable {
 #[derive(Clone)]
 pub enum Env<'pest> {
     Variable { name: Box<str>, value: Box<str> },
+        // TODO: should we use Vec<Span> instead to remember assignment locs?
     MacroRules (ast::MacroRules<'pest>),
     FileName (Box<str>)
 }
