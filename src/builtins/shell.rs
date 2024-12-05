@@ -7,11 +7,11 @@ use super::{BUILTINS, Builtin, Consumer, builtin_macro, builtin_decor};
 #[apply(builtin_macro!)]
 pub fn shell(args: Vec<Box<str>>, env: Vec<Env>)
 {
-    vec!()
+    "".to_string()
 }
 
 #[apply(builtin_decor!)]
 pub fn shell(args: Vec<Box<str>>, target: ast::CChunk)
 {
-    vec!()
+    "".to_string()
 }

@@ -15,8 +15,8 @@ pub mod hash;
 #[distributed_slice]
 pub static BUILTINS: [&'static Builtin];
 
-type MacroConsumer = fn(args: Vec<Box<str>>, env: Vec<Env>) -> Vec<Box<dyn Realizable>>;
-type DecoratorConsumer = fn(args: Vec<Box<str>>, target: ast::CChunk) -> Vec<Box<dyn Realizable>>;
+type MacroConsumer = fn(args: Vec<Box<str>>, env: Vec<Env>) -> String;
+type DecoratorConsumer = fn(args: Vec<Box<str>>, target: ast::CChunk) -> String;
 
 pub enum Consumer {
     Macro(MacroConsumer),
@@ -41,7 +41,7 @@ macro_rules! builtin_macro {(
         static #{concat_idents!(BUILTIN_MACRO_, $NAME)}: &'static Builtin =
             &Builtin {
                 name: stringify!($NAME),
-                consumer: Consumer::Macro(|$($param : $type),*| -> Vec<Box<dyn Realizable>>
+                consumer: Consumer::Macro(|$($param : $type),*| -> String
                     $body )
             };
     }
@@ -59,7 +59,7 @@ macro_rules! builtin_decor {(
         static #{concat_idents!(BUILTIN_DECOR_, $NAME)}: &'static Builtin =
             &Builtin {
                 name: stringify!($NAME),
-                consumer: Consumer::Decorator(|$($param : $type),*| -> Vec<Box<dyn Realizable>>
+                consumer: Consumer::Decorator(|$($param : $type),*| -> String
                     $body )
             };
     }

@@ -5,17 +5,19 @@ use crate::parser::ast;
 use pest::Span;
 
 fn apply_builtin(name: Box<str>, args: Vec<Box<str>>, env: Vec<Env>)
-        -> Vec<Box<dyn Realizable>>
+        -> String
 {
     use crate::builtins::{BUILTINS, Builtin, Consumer};
 
-    let mut result: Option<Vec<Box<dyn Realizable>>> = None;
+    let mut result: Option<String> = None;
 
     for bi in BUILTINS {
         match bi {
-            Builtin { name, consumer: Consumer::Macro(c) } => {
-                result = Some(c(args, env));
-                break;
+            Builtin { name: nm, consumer: Consumer::Macro(c) } => {
+                if nm.eq(&Box::leak(name.clone())) {
+                    result = Some(c(args, env));
+                    break;
+                }
             },
             _ => ()
         }
@@ -25,7 +27,7 @@ fn apply_builtin(name: Box<str>, args: Vec<Box<str>>, env: Vec<Env>)
 }
 
 fn apply_rules(rules: ast::MacroRules, args: Vec<Box<str>>, mut env: Vec<Env>)
-        -> Vec<Box<dyn Realizable>>
+        -> String
 {
     let mut my_match: Option<ast::MatchRule> = None;
 
@@ -51,9 +53,9 @@ fn apply_rules(rules: ast::MacroRules, args: Vec<Box<str>>, mut env: Vec<Env>)
         None => ()
     }
 
-    // TODO: Return CChunks once CChunk is Realizable
+    // TODO: Return string once CChunk is realizable
 
-    vec!()
+    "".to_string()
 }
 
 
@@ -65,7 +67,7 @@ impl Realizable for ast::MacroCall<'_>
         let mut my_rule: Option<ast::MacroRules> = None;
         let my_args = self.arg_set.iter().fold(vec!(), |mut l, r| { l.push(r.content.clone()); l });
 
-        let mut result: String = "".to_owned();
+        let result: &str = "";
 
         for k in env.iter() {
             match k {
@@ -81,9 +83,9 @@ impl Realizable for ast::MacroCall<'_>
         match my_rule {
             Some(mr) => apply_rules(mr, my_args, inner_env),
             None => apply_builtin(self.ident.clone(), my_args, inner_env)
-        };
+        }.clone_into(&mut result.to_owned());
 
-        ""
+        result
     }
 }
 
