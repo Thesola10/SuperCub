@@ -55,15 +55,21 @@ pub enum Env<'pest> {
     FileName (Box<str>)
 }
 
-/// An object representing a line-encoded Realization string.
-/// This is used to generate #line directives in the final C code.
-#[derive(Clone)]
-pub struct Realization<'re> {
-    pub filename: &'re str,
-    pub line: u32,
-    pub block: &'re str
-}
+/// A small generator function for #line directives in the document
+pub fn span_to_ref(span: Span, env: Vec<Env>) -> String
+{
+    let line_no = span.start_pos().line_col().0;
+    let mut name: &str = "(builtin)";
 
+    for key in env {
+        match key {
+            Env::FileName(fi) => { name = Box::leak(fi); break; },
+            _ => ()
+        }
+    }
+
+    format!("\n#line {} \"{}\"\n", line_no, name)
+}
 
 impl Realizable for ast::Document<'_>
 {

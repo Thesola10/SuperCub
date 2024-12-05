@@ -1,18 +1,18 @@
 
-use super::{Realizable, Resolvable, Infixable, Env};
+use super::{span_to_ref, Env, Infixable, Realizable, Resolvable};
 use crate::parser::ast;
 
 use pest::Span;
 
-fn find_by_name(id: String, env: Vec<Env>) -> Option<&'static str>
+fn find_by_name(id: String, env: Vec<Env>) -> Option<String>
 {
-    let mut result: Option<&str> = None;
+    let mut result: Option<String> = None;
 
     for k in env.iter() {
         match k {
             Env::Variable { name, value } => {
                 if id.eq(Box::<str>::leak(name.clone())) {
-                    result = Some(Box::<str>::leak(value.clone()));
+                    result = Some(Box::<str>::leak(value.clone()).to_owned());
                     break;
                 }
             },
@@ -23,9 +23,8 @@ fn find_by_name(id: String, env: Vec<Env>) -> Option<&'static str>
     result
 }
 
-fn merge_numbered(env: Vec<Env>) -> Option<&'static str>
+fn merge_numbered<'pest>(env: Vec<Env>) -> Option<String>
 {
-    let mut result: Option<&str> = None;
     let mut acc: String = "".to_string();
 
     let mut pos: u16 = 0;
@@ -42,12 +41,16 @@ fn merge_numbered(env: Vec<Env>) -> Option<&'static str>
         }
     }
 
-    result
+    if ! acc.is_empty() {
+        Some(acc)
+    } else {
+        None
+    }
 }
 
-impl Realizable for ast::Variable<'_>
+impl ast::Variable<'_>
 {
-    fn realize(&self, env: Vec<Env>) -> &str
+    fn get_value(&self, env: Vec<Env>) -> String
     {
         match self {
             ast::Variable::NamedVariable(nv) => {
@@ -60,6 +63,21 @@ impl Realizable for ast::Variable<'_>
                 merge_numbered(env).expect("There is no body context to expand")
             }
         }
+    }
+}
+
+impl Realizable for ast::Variable<'_>
+{
+    fn realize(&self, env: Vec<Env>) -> &str
+    {
+        let result: &str = "";
+
+        let mut merged: String = span_to_ref(self.get_span(), env.clone());
+
+        merged.push_str(&self.get_value(env));
+        merged.clone_into(&mut result.to_owned());
+
+        result
     }
 }
 
@@ -83,8 +101,16 @@ impl Realizable for ast::StringVariable<'_>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
-        //TODO: Quote+escape value
-        self.var.realize(env)
+        let result: &str = "";
+
+        let mut merged: String = span_to_ref(self.get_span(), env.clone());
+
+        merged.push('"');
+        merged.push_str(&self.var.get_value(env).replace(r#"""#, r#"\""#));
+        merged.push('"');   //              For clarity:    "       \"
+        merged.clone_into(&mut result.to_owned());
+
+        result
     }
 }
 
