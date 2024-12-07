@@ -30,7 +30,7 @@ use crate::parser::ast::Document;
 
 use crate::realize::Env;
 
-pub fn load_document(doc: &str) -> Document {
+pub fn load_document<'pest>(doc: &'pest str) -> Box<Document<'pest>> {
     use pest::Parser;
     use from_pest::FromPest;
 
@@ -38,7 +38,7 @@ pub fn load_document(doc: &str) -> Document {
 
     let mut pairs = cub::Parser::parse(cub::Rule::document, doc).unwrap();
 
-    Document::from_pest(&mut pairs).unwrap()
+    Box::new(Document::from_pest(&mut pairs).unwrap())
 }
 
 /// Transform Super Cub source code (doc) into final C code, given

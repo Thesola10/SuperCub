@@ -115,14 +115,14 @@ pub mod ast {
     #[pest_ast(rule(Rule::c_incl_str))]
     pub struct LocalInclude {
         #[pest_ast(outer(with(span_into_str)))]
-        content: Box<str>
+        pub content: Box<str>
     }
 
     #[derive(Debug, Clone, FromPest)]
     #[pest_ast(rule(Rule::c_incl_sys))]
     pub struct SystemInclude {
         #[pest_ast(outer(with(span_into_str)))]
-        content: Box<str>
+        pub content: Box<str>
     }
 
     #[derive(Debug, Clone, FromPest)]
@@ -160,7 +160,7 @@ pub mod ast {
     pub struct CInclude<'pest> {
         #[pest_ast(outer())]
         span: Span<'pest>,
-        path: IncludePath
+        pub path: IncludePath
     }
 
     #[derive(Debug, Clone, FromPest)]

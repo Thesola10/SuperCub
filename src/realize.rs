@@ -6,6 +6,7 @@ use pest::Span;
 
 pub mod macro_call;
 pub mod variable;
+pub mod decorator;
 
 /// AST elements which can be converted into plain text.
 pub trait Realizable: Resolvable {

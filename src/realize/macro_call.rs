@@ -97,15 +97,4 @@ impl Infixable for ast::MacroCall<'_>
     }
 }
 
-impl Resolvable for ast::MacroCall<'_>
-{
-    fn resolve(&self) -> Vec<&dyn Realizable>
-    {
-        vec!(self)
-    }
-
-    fn get_env(&self) -> Vec<Env>
-    {
-        vec!()
-    }
-}
+impl Resolvable for ast::MacroCall<'_> {}
