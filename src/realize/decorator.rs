@@ -49,7 +49,7 @@ impl<'pest> ast::Decorator<'pest>
 }
 
 // TODO: do we need to be Realizable?
-impl Realizable for ast::Decorator<'_>
+impl<'pest> Realizable<'pest> for ast::Decorator<'pest>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -57,14 +57,18 @@ impl Realizable for ast::Decorator<'_>
     }
 }
 
-impl Resolvable for ast::Decorator<'_>
+impl<'pest> Resolvable<'pest> for ast::Decorator<'pest>
 {
-    fn resolve(&self) -> Vec<&dyn Realizable>
+    fn resolve(&self) -> Vec<&dyn Realizable<'pest>>
     {
         if is_with_macros!(self) {
             let doc = Box::leak(self.import_with_macros().unwrap());
             doc.resolve()
         } else {
+            // TODO: execute decorator from env
+            // 1. Parse the target CChunk to determine its type and pattern-match
+            // 2. Split and assign body environment prior to macro call
+            // 3. Return result of macro call in resolution process
             vec!()
         }
     }

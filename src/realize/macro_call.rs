@@ -59,7 +59,7 @@ fn apply_rules(rules: ast::MacroRules, args: Vec<Box<str>>, mut env: Vec<Env>)
 }
 
 
-impl Realizable for ast::MacroCall<'_>
+impl<'pest> Realizable<'pest> for ast::MacroCall<'pest>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -97,4 +97,4 @@ impl Infixable for ast::MacroCall<'_>
     }
 }
 
-impl Resolvable for ast::MacroCall<'_> {}
+impl<'pest> Resolvable<'pest> for ast::MacroCall<'pest> {}

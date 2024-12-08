@@ -9,7 +9,7 @@ pub mod variable;
 pub mod decorator;
 
 /// AST elements which can be converted into plain text.
-pub trait Realizable: Resolvable {
+pub trait Realizable<'pest>: Resolvable<'pest> {
     /// Return plain text representing this Realizable.
     fn realize(&self, env: Vec<Env>) -> &str;
 }
@@ -21,28 +21,25 @@ pub trait Infixable {
 }
 
 /// AST elements which can be converted into Realizable trees.
-pub trait Resolvable {
+pub trait Resolvable<'pest> {
     /// Return a tree of Realizables from interpreting this Resolvable.
     /// To traverse the tree, call resolve() on its children.
-    fn resolve(&self) -> Vec<&dyn Realizable>
+    fn resolve(&self) -> Vec<&dyn Realizable<'pest>>
     { vec!() }
 
     /// Return a set of environment keys for the node.
     /// In practice, this should only return MacroRules.
-    fn get_env(&self) -> Vec<Env>
+    fn get_env(&self, env: Vec<Env<'pest>>) -> Vec<Env<'pest>>
     { vec!() }
 
     /// Return a set of environment keys in the tree.
     /// In practice, this should only return MacroRules.
-    fn gather_env(&self) -> Vec<Env>
+    fn gather_env(&self, env: &'pest mut Vec<Env<'pest>>)
     {
-        let mut target_vec = self.get_env();
-
         for m in self.resolve() {
-            target_vec.append(&mut m.gather_env());
+            let child_env = &mut m.get_env(env.clone());
+            env.append(child_env)
         }
-
-        target_vec
     }
 }
 
@@ -72,7 +69,18 @@ pub fn span_to_ref(span: Span, env: Vec<Env>) -> String
     format!("\n#line {} \"{}\"\n", line_no, name)
 }
 
-impl Realizable for ast::Document<'_>
+/// This allows macro calls to consume the AST when resolving
+impl Realizable<'_> for String
+{
+    fn realize(&self, env: Vec<Env>) -> &str
+    {
+        self.as_str()
+    }
+}
+
+impl Resolvable<'_> for String {}
+
+impl Realizable<'_> for ast::Document<'_>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -80,15 +88,4 @@ impl Realizable for ast::Document<'_>
     }
 }
 
-impl Resolvable for ast::Document<'_>
-{
-    fn resolve(&self) -> Vec<&dyn Realizable>
-    {
-        vec!()
-    }
-
-    fn get_env(&self) -> Vec<Env>
-    {
-        vec!()
-    }
-}
+impl Resolvable<'_> for ast::Document<'_> {}

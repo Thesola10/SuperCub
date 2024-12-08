@@ -66,7 +66,7 @@ impl ast::Variable<'_>
     }
 }
 
-impl Realizable for ast::Variable<'_>
+impl<'pest> Realizable<'pest> for ast::Variable<'pest>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -94,10 +94,10 @@ impl Infixable for ast::Variable<'_>
 }
 
 // An empty impl means end of resolution tree
-impl Resolvable for ast::Variable<'_> {}
+impl<'pest> Resolvable<'pest> for ast::Variable<'pest> {}
 
 
-impl Realizable for ast::StringVariable<'_>
+impl<'pest> Realizable<'pest> for ast::StringVariable<'pest>
 {
     fn realize(&self, env: Vec<Env>) -> &str
     {
@@ -122,4 +122,4 @@ impl Infixable for ast::StringVariable<'_>
     }
 }
 
-impl Resolvable for ast::StringVariable<'_> {}
+impl<'pest> Resolvable<'pest> for ast::StringVariable<'pest> {}
